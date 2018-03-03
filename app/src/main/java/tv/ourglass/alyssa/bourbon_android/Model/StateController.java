@@ -100,6 +100,7 @@ public class StateController {
 
     public ArrayList<OGVenue> getAllVenues() {
 
+        // Sort by location distance if we have a location
         if (latestLocation!=null){
 
              Collections.sort(mAllVenues, new Comparator<OGVenue>() {
@@ -121,7 +122,6 @@ public class StateController {
         }
 
         return mAllVenues;
-
 
     }
 

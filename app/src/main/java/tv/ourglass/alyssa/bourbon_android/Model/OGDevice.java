@@ -9,6 +9,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import tv.ourglass.alyssa.bourbon_android.BourbonApplication;
 
@@ -40,14 +41,16 @@ public class OGDevice {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
         Log.d("OGDevice", deviceJson.optString("lastContact"));
         try {
-            this.lastContact = dateFormat.parse(deviceJson.getString("lastContact"));
+            String lastContactString = deviceJson.getString("lastContact");
+            lastContactString = lastContactString.replace("Z","-0000");
+            this.lastContact = dateFormat.parse(lastContactString);
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
-        //long interval = this.lastContact == null ? 1000000 : System.currentTimeMillis() - this.lastContact.getTime();
-        //this.isActive = interval < TimeUnit.SECONDS.toMillis(300);
-        this.isActive = true;
+        long interval = this.lastContact == null ? 1000000 : System.currentTimeMillis() - this.lastContact.getTime();
+        this.isActive = interval < TimeUnit.SECONDS.toMillis(300);
+        //this.isActive = true;
     }
 
     public String getUrl() {
