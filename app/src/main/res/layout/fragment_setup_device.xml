@@ -36,29 +36,33 @@
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="@dimen/text_input_layout_height"
+            android:background="@drawable/edit_underline">
 
             <tv.ourglass.alyssa.bourbon_android.Views.RegularEditText
                 android:id="@+id/regCode"
-                android:hint="@string/regCodeHint"
-                android:textColor="@color/OGWhite"
-                android:inputType="text"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="@dimen/text_input_file_height"
+                android:background="@android:color/transparent"
+                android:hint="@string/regCodeHint"
+                android:inputType="text"
+                android:textColor="@color/OGWhite" />
 
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="@dimen/text_input_layout_height"
+            android:background="@drawable/edit_underline">
 
             <tv.ourglass.alyssa.bourbon_android.Views.RegularEditText
                 android:id="@+id/deviceName"
-                android:hint="@string/deviceNameHint"
-                android:textColor="@color/OGWhite"
-                android:inputType="textCapSentences|textAutoCorrect"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="@dimen/text_input_file_height"
+                android:background="@android:color/transparent"
+                android:hint="@string/deviceNameHint"
+                android:inputType="textCapSentences|textAutoCorrect"
+                android:textColor="@color/OGWhite" />
 
         </android.support.design.widget.TextInputLayout>
 

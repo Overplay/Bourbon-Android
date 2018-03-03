@@ -26,14 +26,18 @@
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="@drawable/edit_underline">
+
             <tv.ourglass.alyssa.bourbon_android.Views.RegularEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:id="@+id/email"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/text_input_file_height"
+                android:background="@android:color/transparent"
                 android:hint="@string/email"
                 android:inputType="textEmailAddress"
-                android:textColor="@color/OGWhite"/>
+                android:textColor="@color/OGWhite"
+                android:textSize="@dimen/text_input_text_size" />
         </android.support.design.widget.TextInputLayout>
 
         <!--<ImageButton

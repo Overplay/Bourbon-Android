@@ -6,6 +6,11 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
+import com.crashlytics.android.answers.LoginEvent;
+import com.crashlytics.android.answers.SignUpEvent;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -29,21 +34,13 @@ import tv.ourglass.alyssa.bourbon_android.Scenes.Registration.WelcomeActivity;
  * Performs HTTP requests to OGCloud endpoints.
  * Created by atorres on 5/30/17.
  */
-public class OGCloud {
+public class OGCloud2 {
 
-    public final String TAG = "OGCloud";
+    public static final String TAG = "OGCloud2";
 
-    private final OkHttpClient client = BourbonApplication.okclient;
+    private static final OkHttpClient client = BourbonApplication.okclient;
 
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-
-    private static OGCloud instance = new OGCloud();
-
-    private OGCloud() {}
-
-    public static OGCloud getInstance() {
-        return instance;
-    }
 
     /**
      * Error type for OGCloud HTTP requests.
@@ -52,13 +49,6 @@ public class OGCloud {
         authFailure, tokenInvalid, jsonError, defaultError
     }
 
-    /**
-     * Callback class to handle HTTP request responses.
-     */
-    public static abstract class HttpCallback {
-        abstract public void onSuccess(Response response); // this must close the response body or resources will leak
-        abstract public void onFailure(Call call, IOException e, OGCloudError error);
-    }
 
     /**
      * Makes an HTTP request with OkHttp.
@@ -67,7 +57,7 @@ public class OGCloud {
      * @param cb the callback to process the response
      * @param context the context to use
      */
-    private void request(Request request, final HttpCallback cb, final Context context) {
+    static void request(Request request, final HttpCallback cb, final Context context) {
 
         client.newCall(request).enqueue(new Callback() {
 
@@ -117,7 +107,7 @@ public class OGCloud {
      * @param url the URL
      * @param cb the callback to process the response
      */
-    private void getWithoutAuthCheck(Context context, String url, final HttpCallback cb) {
+    private static void getWithoutAuthCheck(Context context, String url, final HttpCallback cb) {
         Request req;
         String jwt = SharedPrefsManager.getJwt(context);
 
@@ -161,7 +151,7 @@ public class OGCloud {
      * @param url the URL
      * @param cb the callback to process the response
      */
-    public void get(Context context, String url, HttpCallback cb) {
+    public static void get(Context context, String url, HttpCallback cb) {
         Request req;
         String jwt = SharedPrefsManager.getJwt(context);
 
@@ -189,7 +179,7 @@ public class OGCloud {
      * @param params the parameters
      * @param cb the callback to process the response
      */
-    private void postJson(Context context, String url, JSONObject params, HttpCallback cb) {
+    private static void postJson(Context context, String url, JSONObject params, HttpCallback cb) {
 
         String jsonStr = params.toString();
         RequestBody body = RequestBody.create(JSON, jsonStr);
@@ -220,7 +210,7 @@ public class OGCloud {
      * @param params the parameters
      * @param cb the callback to process the response
      */
-    private void putJson(Context context, String url, JSONObject params, HttpCallback cb) {
+    public static void putJson(Context context, String url, JSONObject params, HttpCallback cb) {
 
         String jsonStr = params.toString();
         RequestBody body = RequestBody.create(JSON, jsonStr);
@@ -250,39 +240,44 @@ public class OGCloud {
      * @param password user's password
      * @param cb the callback to process the response
      */
-    public void login(final Context context, final String email, final String password,
+    public static void login(final Context context, final String email, final String password,
                       final HttpCallback cb) {
+
+
         try {
             JSONObject params = new JSONObject();
             params.put("email", email);
             params.put("password", password);
             params.put("type", "local");
+            params.put("responseType", "jwt"); // newly added feature in Mitch's Waterlock
+
 
             HttpCallback loginCb = new HttpCallback() {
                 @Override
                 public void onSuccess(final Response loginResponse) {
-                    getToken(context, new HttpCallback() {
-                        @Override
-                        public void onSuccess(Response tokenResponse) {
-                            checkJWT(context, new HttpCallback() {
-                                @Override
-                                public void onSuccess(Response checkJWTResponse) {
-                                    cb.onSuccess(loginResponse);
-                                }
-                                @Override
-                                public void onFailure(Call call, IOException e, OGCloudError error) {
-                                    cb.onFailure(call, e, error);
-                                }
-                            });
-                        }
-                        @Override
-                        public void onFailure(Call call, IOException e, OGCloudError error) {
-                            cb.onFailure(call, e, error);
-                        }
-                    });
+                    try {
+                        String jsonData = loginResponse.body().string();
+                        JSONObject json = new JSONObject(jsonData);
+                        SharedPrefsManager.setJwt(context, json.getString("token"));
+                        SharedPrefsManager.setJwtExpiry(context, json.getLong("expires"));
+                        // userinfo for fabric set in checkJwt method
+                        Answers.getInstance().logLogin(new LoginEvent()
+                                .putMethod("email")
+                                .putSuccess(true));
+                        cb.onSuccess(loginResponse);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.d(TAG, "unable to get necessary token info");
+                        cb.onFailure(null, null, OGCloudError.jsonError);
+                    }
+
                 }
                 @Override
                 public void onFailure(Call call, IOException e, OGCloudError error) {
+                    Answers.getInstance().logLogin(new LoginEvent()
+                            .putMethod("email")
+                            .putSuccess(false));
                     cb.onFailure(call, e, error);
                 }
             };
@@ -302,7 +297,7 @@ public class OGCloud {
      * @param password user's password
      * @param cb the callback to process the response
      */
-    public void loginOnly(final Context context, final String email, final String password,
+    public static void loginOnly(final Context context, final String email, final String password,
                       final HttpCallback cb) {
         try {
             JSONObject params = new JSONObject();
@@ -328,13 +323,14 @@ public class OGCloud {
      * @param lastName  new user's last name
      * @param cb the callback to process the response
      */
-    public void register(final Context context, final String email, final String password,
+    public static void register(final Context context, final String email, final String password,
                          final String firstName, final String lastName, final HttpCallback cb) {
         try {
             JSONObject params = new JSONObject();
             params.put("email", email);
             params.put("password", password);
             params.put("type", "local");
+
 
             JSONObject user = new JSONObject();
             user.put("firstName", firstName);
@@ -344,22 +340,57 @@ public class OGCloud {
             HttpCallback registerCb = new HttpCallback() {
                 @Override
                 public void onSuccess(final Response regResponse) {
-                    getToken(context, new HttpCallback() {
+
+
+                }
+                @Override
+                public void onFailure(Call call, IOException e, OGCloudError error) {
+                    cb.onFailure(call, e, error);
+                }
+            };
+
+            postJson(context, OGConstants.belliniCore + OGConstants.registerPath, params, registerCb);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.d(TAG, "error creating JSON object for registration");
+            cb.onFailure(null, null, OGCloudError.jsonError);
+        }
+    }
+
+    public static void registerAndLogin(final Context context, final String email, final String password,
+                                        final String firstName, final String lastName, final HttpCallback cb){
+
+
+        try {
+            JSONObject params = new JSONObject();
+            params.put("email", email);
+            params.put("password", password);
+            params.put("type", "local");
+
+
+            JSONObject user = new JSONObject();
+            user.put("firstName", firstName);
+            user.put("lastName", lastName);
+            params.put("user", user);
+
+            HttpCallback registerCb = new HttpCallback() {
+                @Override
+                public void onSuccess(final Response regResponse) {
+                    login(context, email, password, new HttpCallback() {
                         @Override
                         public void onSuccess(Response tokenResponse) {
-                            checkJWT(context, new HttpCallback() {
-                                @Override
-                                public void onSuccess(Response checkJWTResponse) {
-                                    cb.onSuccess(regResponse);
-                                }
-                                @Override
-                                public void onFailure(Call call, IOException e, OGCloudError error) {
-                                    cb.onFailure(call, e, error);
-                                }
-                            });
+                            Answers.getInstance().logSignUp(new SignUpEvent()
+                                    .putMethod("email")
+                                    .putSuccess(true));
+
+                           cb.onSuccess(tokenResponse);
                         }
                         @Override
                         public void onFailure(Call call, IOException e, OGCloudError error) {
+                            Answers.getInstance().logSignUp(new SignUpEvent()
+                                    .putMethod("email")
+                                    .putSuccess(false));
                             cb.onFailure(call, e, error);
                         }
                     });
@@ -377,6 +408,13 @@ public class OGCloud {
             Log.d(TAG, "error creating JSON object for registration");
             cb.onFailure(null, null, OGCloudError.jsonError);
         }
+
+
+
+
+
+
+
     }
 
     /**
@@ -387,7 +425,7 @@ public class OGCloud {
      * @param newPassword new password
      * @param cb the callback to process the response
      */
-    public void changePassword(final Context context, String email, final String newPassword,
+    public static void changePassword(final Context context, String email, final String newPassword,
                                final HttpCallback cb) {
         try {
             JSONObject params = new JSONObject();
@@ -412,11 +450,11 @@ public class OGCloud {
      * @param userId the user's id
      * @param cb the callback to process the response
      */
-    public void changeAccountInfo(final Context context, final String firstName, final String lastName,
+    public static void changeAccountInfo(final Context context, final String firstName, final String lastName,
                                   final String email, final String userId, final HttpCallback cb) {
         try {
             JSONObject params = new JSONObject();
-            //params.put("email", email);
+            params.put("email", email);
             params.put("firstName", firstName);
             params.put("lastName", lastName);
 
@@ -425,11 +463,16 @@ public class OGCloud {
                 public void onSuccess(Response response) {
                     SharedPrefsManager.setUserFirstName(context, firstName);
                     SharedPrefsManager.setUserLastName(context, lastName);
-                    //SharedPrefsManager.setUserEmail(context, email);
+                    SharedPrefsManager.setUserEmail(context, email);
+                    BourbonApplication.setFabricUserInfo();
+                    Answers.getInstance().logCustom(new CustomEvent("User Info Update")
+                    .putCustomAttribute("success", 1));
                     cb.onSuccess(response);
                 }
                 @Override
                 public void onFailure(Call call, IOException e, OGCloudError error) {
+                    Answers.getInstance().logCustom(new CustomEvent("User Info Update")
+                            .putCustomAttribute("success", 0));
                     cb.onFailure(call, e, error);
                 }
             };
@@ -449,7 +492,7 @@ public class OGCloud {
      * @param email invitee's email
      * @param cb the callback to process the response
      */
-    public void inviteUser(Context context, String email, HttpCallback cb) {
+    public static void inviteUser(Context context, String email, HttpCallback cb) {
         try {
             JSONObject params = new JSONObject();
             params.put("email", email);
@@ -468,7 +511,7 @@ public class OGCloud {
      * @param context the context to use
      * @param cb the callback to process the response
      */
-    public void getToken(final Context context, final HttpCallback cb) {
+    public static void getToken(final Context context, final HttpCallback cb) {
         HttpCallback getTokenCb = new HttpCallback() {
             @Override
             public void onSuccess(Response response) {
@@ -499,7 +542,7 @@ public class OGCloud {
      * @param context the context to use
      * @param cb the callback to process the response
      */
-    public void checkJWT(final Context context, final HttpCallback cb) {
+    public static void checkJWT(final Context context, final HttpCallback cb) {
         HttpCallback checkJWTCb = new HttpCallback() {
             @Override
             public void onSuccess(Response response) {
@@ -510,6 +553,7 @@ public class OGCloud {
                     SharedPrefsManager.setUserFirstName(context, json.getString("firstName"));
                     SharedPrefsManager.setUserLastName(context, json.getString("lastName"));
                     SharedPrefsManager.setUserEmail(context, json.getString("email"));
+                    BourbonApplication.setFabricUserInfo();
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -534,7 +578,7 @@ public class OGCloud {
      * @param context the context to use
      * @param cb the callback to process the response
      */
-    public void getVenues(Context context, HttpCallback cb) {
+    public static void getVenues(Context context, HttpCallback cb) {
         get(context, OGConstants.belliniCore + OGConstants.venuesPath, cb);
     }
 
@@ -544,7 +588,7 @@ public class OGCloud {
      * @param context the context to use
      * @param cb the callback to process the response
      */
-    public void getUserVenues(Context context, HttpCallback cb) {
+    public static void getUserVenues(Context context, HttpCallback cb) {
         get(context, OGConstants.belliniCore + OGConstants.userVenuesPath, cb);
     }
 
@@ -555,7 +599,7 @@ public class OGCloud {
      * @param venueUUID venue UUID
      * @param cb the callback to process the response
      */
-    public void getDevices(Context context, String venueUUID, HttpCallback cb) {
+    public static void getDevices(Context context, String venueUUID, HttpCallback cb) {
         get(context, OGConstants.belliniDM + OGConstants.devicesPath + venueUUID, cb);
     }
 
@@ -566,7 +610,7 @@ public class OGCloud {
      * @param regCode registration code
      * @param cb the callback to process the response
      */
-    public void findByRegCode(Context context, String regCode, HttpCallback cb) {
+    public static void findByRegCode(Context context, String regCode, HttpCallback cb) {
         get(context, OGConstants.belliniDM + OGConstants.findByRegCodePath + regCode, cb);
     }
 
@@ -578,7 +622,7 @@ public class OGCloud {
      * @param name name to give the device
      * @param cb the callback to process the response
      */
-    public void changeDeviceName(final Context context, String udid, String name,
+    public static void changeDeviceName(final Context context, String udid, String name,
                                  final HttpCallback cb) {
         try {
             JSONObject params = new JSONObject();
@@ -613,7 +657,7 @@ public class OGCloud {
      * @param venueUuid venue UUID
      * @param cb the callback to process the response
      */
-    public void associate(final Context context, String deviceUdid, String venueUuid,
+    public static void associate(final Context context, String deviceUdid, String venueUuid,
                           final HttpCallback cb) {
         try {
             JSONObject params = new JSONObject();
@@ -648,7 +692,7 @@ public class OGCloud {
      * @param location search location
      * @param cb the callback to process the response
      */
-    public void yelpSearch(Context context, String term, String location, HttpCallback cb) {
+    public static void yelpSearch(Context context, String term, String location, HttpCallback cb) {
         String url = OGConstants.belliniCore + OGConstants.yelpSearchPath;
         url += "?location=" + location + "&term=" + term;
         get(context, url, cb);
@@ -663,7 +707,7 @@ public class OGCloud {
      * @param longitude longitude of the search location
      * @param cb the callback to process the response
      */
-    public void yelpSearch(Context context, String term, double latitude, double longitude,
+    public static void yelpSearch(Context context, String term, double latitude, double longitude,
                            HttpCallback cb) {
         String url = OGConstants.belliniCore + OGConstants.yelpSearchPath;
         url += "?latitude=" + latitude + "&longitude=" + longitude + "&term=" + term;
@@ -677,7 +721,7 @@ public class OGCloud {
      * @param venue the venue to create
      * @param cb the callback to process the response
      */
-    public void addVenue(final Context context, OGVenue venue, final HttpCallback cb) {
+    public static void addVenue(final Context context, OGVenue venue, final HttpCallback cb) {
         try {
             JSONObject params = new JSONObject();
             params.put("name", venue.name);
@@ -721,7 +765,7 @@ public class OGCloud {
      *
      * @param context the context to use
      */
-    public void logout(final Context context) {
+    public static void logout(final Context context) {
         // TODO: is there more we need to do here?
         SharedPrefsManager.setJwt(context, null);
         SharedPrefsManager.setJwtExpiry(context, 0l);

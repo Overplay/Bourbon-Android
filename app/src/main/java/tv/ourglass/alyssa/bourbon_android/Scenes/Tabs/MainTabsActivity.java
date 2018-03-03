@@ -1,21 +1,24 @@
 package tv.ourglass.alyssa.bourbon_android.Scenes.Tabs;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
-
-import android.support.v4.view.ViewPager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import tv.ourglass.alyssa.bourbon_android.Model.Yelp.YelpVenue;
 import tv.ourglass.alyssa.bourbon_android.R;
-import tv.ourglass.alyssa.bourbon_android.Scenes.Settings.SetupDevice.FindYelpVenueFragment;
 import tv.ourglass.alyssa.bourbon_android.Views.CrossFadePageTransformer;
 
 public class MainTabsActivity extends AppCompatActivity {
@@ -71,6 +74,31 @@ public class MainTabsActivity extends AppCompatActivity {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         this.registerReceiver(mWifiBroadcastReceiver, intentFilter);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
+            Log.d(TAG, "Prompting permissions...");
+
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                        100);
+
+            }
+
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                        110);
+
+            }
+
+
+        }
     }
 
     @Override

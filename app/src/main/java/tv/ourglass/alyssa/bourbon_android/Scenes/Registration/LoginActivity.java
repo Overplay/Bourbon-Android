@@ -7,13 +7,17 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.ContentViewEvent;
+
 import java.io.IOException;
 
 import okhttp3.Call;
 import okhttp3.Response;
 import tv.ourglass.alyssa.bourbon_android.Model.Input.InputType;
 import tv.ourglass.alyssa.bourbon_android.Model.Input.TextFocusChangeListener;
-import tv.ourglass.alyssa.bourbon_android.Networking.OGCloud;
+import tv.ourglass.alyssa.bourbon_android.Networking.HttpCallback;
+import tv.ourglass.alyssa.bourbon_android.Networking.OGCloud2;
 import tv.ourglass.alyssa.bourbon_android.R;
 import tv.ourglass.alyssa.bourbon_android.Scenes.Tabs.MainTabsActivity;
 
@@ -30,6 +34,10 @@ public class LoginActivity extends RegistrationBaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        Answers.getInstance().logContentView(new ContentViewEvent()
+                .putContentName("Login Screen")
+                .putContentType("Activity"));
 
         mEmail = (EditText) findViewById(R.id.email);
         mEmail.setOnFocusChangeListener(TextFocusChangeListener.newInstance(mEmail, InputType.EMAIL));
@@ -56,21 +64,8 @@ public class LoginActivity extends RegistrationBaseActivity {
         }
 
         if (emailValid && pwdValid) {
-            OGCloud.getInstance().login(this, email, password,
-                    new OGCloud.HttpCallback() {
-                        @Override
-                        public void onFailure(Call call, final IOException e, OGCloud.OGCloudError error) {
-                            LoginActivity.this.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    progress.dismiss();
-                                    showAlert(getString(R.string.uhoh), getString(R.string.loginErrorAlertMsg));
-                                    if (e != null) {
-                                        Log.d(TAG, e.getLocalizedMessage());
-                                    }
-                                }
-                            });
-                        }
+            OGCloud2.login(this, email, password,
+                    new HttpCallback() {
 
                         @Override
                         public void onSuccess(Response response) {
@@ -84,6 +79,20 @@ public class LoginActivity extends RegistrationBaseActivity {
                                 }
                             });
                             response.body().close();
+                        }
+
+                        @Override
+                        public void onFailure(Call call, final IOException e, OGCloud2.OGCloudError error) {
+                            LoginActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    progress.dismiss();
+                                    showAlert(getString(R.string.uhoh), getString(R.string.loginErrorAlertMsg));
+                                    if (e != null) {
+                                        Log.d(TAG, e.getLocalizedMessage());
+                                    }
+                                }
+                            });
                         }
                     });
         } else {

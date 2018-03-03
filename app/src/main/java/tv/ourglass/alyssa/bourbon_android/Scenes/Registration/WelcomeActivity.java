@@ -4,6 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.ContentViewEvent;
+
 import tv.ourglass.alyssa.bourbon_android.R;
 
 public class WelcomeActivity extends RegistrationBaseActivity {
@@ -12,6 +15,10 @@ public class WelcomeActivity extends RegistrationBaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
+
+        Answers.getInstance().logContentView(new ContentViewEvent()
+                .putContentName("Welcome Screen")
+                .putContentType("Activity"));
 
         findViewById(R.id.loginButton).setOnClickListener(new View.OnClickListener() {
             @Override

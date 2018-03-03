@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/deviceOption"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal" >
 
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
 
     <!--<tv.ourglass.alyssa.bourbon_android.Views.SemiBoldTextView-->
         <!--android:id="@+id/number"-->
@@ -19,11 +23,15 @@
 
 
     <ImageView
-        android:layout_width="117dp"
-        android:layout_height="104dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:scaleType="fitXY"
         app:srcCompat="@drawable/ic_tv_white_48dp" />
+
+    <View
+        android:background="@color/OGHURRICANE_BLUE"
+        android:layout_height="match_parent"
+        android:layout_width="2dp" />
 
     <LinearLayout
         android:id="@+id/headerRow"
@@ -35,21 +43,24 @@
         android:orientation="vertical">
 
         <tv.ourglass.alyssa.bourbon_android.Views.SemiBoldTextView
-            android:id="@+id/name"
+            android:textColor="@color/OGWhite"
             style="@android:style/TextAppearance.Medium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/OGWhite"
-            tools:text="aaaaaa" />
+            android:id="@+id/name" />
 
         <tv.ourglass.alyssa.bourbon_android.Views.LightTextView
             android:id="@+id/station"
             style="@style/TextAppearance.AppCompat.Small"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/OGLightGrey"
-            tools:text="0000" />
+            android:textColor="@color/OGLightGrey" />
 
     </LinearLayout>
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
 
 </LinearLayout>

@@ -1,7 +1,7 @@
 <resources>
-    <string name="google_maps_api_key">AIzaSyDNN76ROI05wdtzEm-u1UlBzP6utNkPMpU</string>
+    <string name="google_maps_api_key">AIzaSyBivdfwH9SwCh2_qQ8dEF-lL4nCckdUMhI</string>
 
-    <string name="app_name">Bourbon</string>
+    <string name="app_name">OurglassTV</string>
 
     <string name="get_started">Let\'s get started!</string>
 

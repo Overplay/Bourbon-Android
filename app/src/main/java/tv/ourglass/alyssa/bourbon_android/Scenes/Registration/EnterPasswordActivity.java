@@ -3,14 +3,11 @@ package tv.ourglass.alyssa.bourbon_android.Scenes.Registration;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -21,7 +18,8 @@ import tv.ourglass.alyssa.bourbon_android.Model.Input.InputType;
 import tv.ourglass.alyssa.bourbon_android.Model.Input.TextFocusChangeListener;
 import tv.ourglass.alyssa.bourbon_android.Model.Input.TextValidator;
 import tv.ourglass.alyssa.bourbon_android.Model.OGConstants;
-import tv.ourglass.alyssa.bourbon_android.Networking.OGCloud;
+import tv.ourglass.alyssa.bourbon_android.Networking.HttpCallback;
+import tv.ourglass.alyssa.bourbon_android.Networking.OGCloud2;
 import tv.ourglass.alyssa.bourbon_android.R;
 import tv.ourglass.alyssa.bourbon_android.Scenes.Tabs.MainTabsActivity;
 
@@ -89,21 +87,9 @@ public class EnterPasswordActivity extends RegistrationBaseActivity {
             return;
         }
 
-        OGCloud.getInstance().register(this, email, password, firstName, lastName,
-                new OGCloud.HttpCallback() {
-                    @Override
-                    public void onFailure(Call call, final IOException e, OGCloud.OGCloudError error) {
+        OGCloud2.registerAndLogin(this, email, password, firstName, lastName,
+                new HttpCallback() {
 
-                        EnterPasswordActivity.this.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                progress.dismiss();
-                                if (e != null)
-                                    Log.d(TAG, e.getLocalizedMessage());
-                                showAlert(getString(R.string.uhoh), "There was a problem signing you up. Do you already have an account with that email?");
-                            }
-                        });
-                    }
 
                     @Override
                     public void onSuccess(Response response) {
@@ -119,6 +105,19 @@ public class EnterPasswordActivity extends RegistrationBaseActivity {
                         });
 
                         response.body().close();
+                    }
+
+                    @Override
+                    public void onFailure(Call call, final IOException e, OGCloud2.OGCloudError error) {
+                        EnterPasswordActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                progress.dismiss();
+                                if (e != null)
+                                    Log.d(TAG, e.getLocalizedMessage());
+                                showAlert(getString(R.string.uhoh), "There was a problem signing you up. Do you already have an account with that email?");
+                            }
+                        });
                     }
                 });
     }

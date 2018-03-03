@@ -9,10 +9,21 @@ public class OGConstants {
     // Dev mode
     public static final boolean devMode = false;  // if true, login isn't really done
     public static final boolean alwaysShowIntro = false;
+    public static final boolean alwaysSkipInto = true;
 
     // OGCloud paths
+    // Production
     public static final String belliniCore = "https://cloud.ourglass.tv/";
     public static final String belliniDM = "https://cloud-dm.ourglass.tv/";
+
+    // Staging
+//    public static final String belliniCore = "http://138.68.230.239:2000/";
+//    public static final String belliniDM = "http://138.68.230.239:2001/";
+
+    // Local
+    //public static final String belliniCore = "http://10.0.2.2:2000/";
+    //public static final String BELLINI_DM_EMU_LOCAL_ADDRESS = "http://10.0.2.2:2001";
+
     public static final String loginPath = "auth/login";
     public static final String registerPath = "auth/addUser";
     public static final String changePasswordPath = "auth/changePwd";

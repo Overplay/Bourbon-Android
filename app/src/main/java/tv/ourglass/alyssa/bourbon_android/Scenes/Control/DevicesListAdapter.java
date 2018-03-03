@@ -7,11 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
+import tv.ourglass.alyssa.bourbon_android.BourbonApplication;
 import tv.ourglass.alyssa.bourbon_android.Model.OGDevice;
 import tv.ourglass.alyssa.bourbon_android.R;
 import tv.ourglass.alyssa.bourbon_android.Scenes.Tabs.MainTabsActivity;
@@ -37,17 +38,32 @@ public class DevicesListAdapter extends ArrayAdapter<OGDevice> {
         OGDevice device = getItem(position);
 
         if (view == null) {
-            view = LayoutInflater.from(getContext()).inflate(R.layout.device_option, parent, false);
+            view = LayoutInflater.from(getContext()).inflate(R.layout.device_cell_layout, parent, false);
         }
 
         if (device != null) {
-            ((TextView) view.findViewById(R.id.number)).setText(String.format(Locale.ENGLISH, "%02d", position + 1));
+            //((TextView) view.findViewById(R.id.number)).setText(String.format(Locale.ENGLISH, "%02d", position + 1));
+            // myImgView.setImageDrawable(getResources().getDrawable(R.drawable.monkey, getApplicationContext().getTheme()));
+
+
             ((TextView) view.findViewById(R.id.name)).setText(device.name);
 
             if (device.isActive) {
                 ((TextView) view.findViewById(R.id.station)).setText(device.stationName);
+                ((ImageView) view.findViewById(R.id.imageViewTV))
+                        .setImageDrawable(BourbonApplication.getContext()
+                                .getResources()
+                                //.getDrawable(R.drawable.ic_tv_green_24dp));
+                                .getDrawable(R.drawable.ic_tv_green_24dp));
+                ((ImageView) view.findViewById(R.id.imageViewWarning)).setVisibility(View.INVISIBLE);
             } else {
                 ((TextView) view.findViewById(R.id.station)).setText(R.string.offline);
+                ((ImageView) view.findViewById(R.id.imageViewTV))
+                        .setImageDrawable(BourbonApplication.getContext()
+                                .getResources()
+                                .getDrawable(R.drawable.ic_tv_red_24dp));
+                ((ImageView) view.findViewById(R.id.imageViewWarning)).setVisibility(View.VISIBLE);
+
             }
         }
 

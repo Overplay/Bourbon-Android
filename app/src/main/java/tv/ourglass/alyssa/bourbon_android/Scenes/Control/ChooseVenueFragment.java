@@ -7,8 +7,8 @@ import android.content.IntentFilter;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
@@ -21,6 +21,8 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.ContentViewEvent;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -56,6 +58,8 @@ public class ChooseVenueFragment extends Fragment implements GoogleApiClient.Con
     GoogleApiClient mLocationClient;  // used to get user's location
 
     Location mLastLocation;
+
+    Handler mHandler = new Handler();
 
     OGCloud.HttpCallback venueCallback = new OGCloud.HttpCallback() {
 
@@ -125,6 +129,12 @@ public class ChooseVenueFragment extends Fragment implements GoogleApiClient.Con
                     @Override
                     public void onClick(View view, OGVenue venue) {
                         if (venue != null) {
+
+                            Answers.getInstance().logContentView(new ContentViewEvent()
+                                .putContentType("Fragment")
+                                .putContentName("Venue Overview")
+                                .putCustomAttribute("Venue", venue.name));
+
                             ((MainTabsActivity) getActivity()).openNewFragment(
                                     ChooseDeviceFragment.newInstance(venue.name, venue.uuid));
                         }
@@ -134,7 +144,15 @@ public class ChooseVenueFragment extends Fragment implements GoogleApiClient.Con
         listView.setAdapter(mVenueListAdapter);
         listView.setEmptyView(rootView.findViewById(R.id.empty));
 
-        this.getVenues();
+        getVenues();
+
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                getVenues();
+                mHandler.postDelayed(this, 15000);
+            }
+        }, 15000);
 
         return rootView;
     }

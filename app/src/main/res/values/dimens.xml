@@ -7,4 +7,9 @@
     <dimen name="appbar_padding_top">8dp</dimen>
 
     <dimen name="yelp_image_size">58dp</dimen>
+    <dimen name="text_input_layout_height">80dip</dimen>
+    <dimen name="text_input_file_height">60dip</dimen>
+    <dimen name="text_input_text_size">24dip</dimen>
+    <dimen name="input_field_height">40dip</dimen>
+    <dimen name="floating_hint_margin">10dip</dimen>
 </resources>

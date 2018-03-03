@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.location.Location;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -21,6 +22,7 @@ import okhttp3.Response;
 import tv.ourglass.alyssa.bourbon_android.BourbonApplication;
 import tv.ourglass.alyssa.bourbon_android.Model.OGVenue.OGVenue;
 import tv.ourglass.alyssa.bourbon_android.Networking.OGCloud;
+import tv.ourglass.alyssa.bourbon_android.Networking.SingleShotLocationProvider;
 
 /**
  * Created by atorres on 5/13/17.
@@ -39,6 +41,8 @@ public class StateController {
     private ArrayList<OGVenue> mOwnedVenues = new ArrayList<>();
 
     private ArrayList<OGVenue> mManagedVenues = new ArrayList<>();
+
+    public Location latestLocation;
 
     /**
      * Updates the venue arrays when it receives a notification.
@@ -63,6 +67,19 @@ public class StateController {
         }
     };
 
+    private SingleShotLocationProvider.LocationCallback locationCallback = new SingleShotLocationProvider.LocationCallback() {
+        @Override
+        public void onLocationAvailable(Location location) {
+            Log.d(TAG, "Got a location update");
+            latestLocation = location;
+        }
+
+        @Override
+        public void onLocationFailure() {
+            Log.d(TAG, "Failed getting location update");
+        }
+    };
+
     private StateController() {
         // register to receive notifications when a venue is added
         LocalBroadcastManager.getInstance(BourbonApplication.getContext())
@@ -73,6 +90,8 @@ public class StateController {
         LocalBroadcastManager.getInstance(BourbonApplication.getContext())
                 .registerReceiver(mBroadcastReceiver,
                         new IntentFilter(BourbonNotification.networkChanged.name()));
+
+
     }
 
     public static StateController getInstance() {
@@ -80,7 +99,30 @@ public class StateController {
     }
 
     public ArrayList<OGVenue> getAllVenues() {
+
+        if (latestLocation!=null){
+
+             Collections.sort(mAllVenues, new Comparator<OGVenue>() {
+                 @Override
+                 public int compare(OGVenue t2, OGVenue t1) {
+
+                     Location t2loc = new Location("");
+                     t2loc.setLatitude(t2.latitude);
+                     t2loc.setLongitude(t2.longitude);
+
+                     Location t1loc = new Location("");
+                     t1loc.setLatitude(t1.latitude);
+                     t1loc.setLongitude(t1.longitude);
+
+                     return t1loc.distanceTo(latestLocation) >= t2loc.distanceTo(latestLocation) ? -1:1;
+                 }
+             });
+
+        }
+
         return mAllVenues;
+
+
     }
 
     public ArrayList<VenueCollection> getMyVenues() {
@@ -97,6 +139,8 @@ public class StateController {
 
     public void findAllVenues(OGCloud.HttpCallback cb) {
         Log.d(TAG, "findAllVenues");
+        SingleShotLocationProvider lp = new SingleShotLocationProvider();
+        lp.requestSingleUpdate(BourbonApplication.getContext(), locationCallback);
         OGCloud.getInstance().getVenues(BourbonApplication.getContext(), wrapAllVenuesCb(cb));
     }
 

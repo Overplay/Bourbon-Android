@@ -26,26 +26,38 @@
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="80dip"
+            android:background="@drawable/edit_underline">
+
             <tv.ourglass.alyssa.bourbon_android.Views.RegularEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:id="@+id/firstName"
-                android:hint="@string/firstName"
+                android:layout_width="match_parent"
+                android:layout_height="60dip"
+                android:backgroundTint="@android:color/transparent"
+                android:hint="@string/firstNameCaps"
                 android:inputType="textPersonName"
-                android:textColor="@color/OGWhite"/>
+                android:paddingTop="@dimen/floating_hint_margin"
+                android:textColor="@color/OGWhite"
+                android:textSize="24dip"
+                android:visibility="visible" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="80dip"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/edit_underline">
+
             <tv.ourglass.alyssa.bourbon_android.Views.RegularEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:id="@+id/lastName"
-                android:hint="@string/lastName"
+                android:layout_width="match_parent"
+                android:layout_height="60dip"
+                android:backgroundTint="@android:color/transparent"
+                android:hint="@string/lastNameCaps"
                 android:inputType="textPersonName"
-                android:textColor="@color/OGWhite"/>
+                android:paddingTop="@dimen/floating_hint_margin"
+                android:textColor="@color/OGWhite"
+                android:textSize="24dip" />
         </android.support.design.widget.TextInputLayout>
 
         <!--<ImageButton

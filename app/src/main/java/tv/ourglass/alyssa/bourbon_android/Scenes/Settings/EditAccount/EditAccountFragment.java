@@ -14,18 +14,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import org.json.JSONObject;
 
 import java.io.IOException;
 
 import okhttp3.Call;
 import okhttp3.Response;
-import tv.ourglass.alyssa.bourbon_android.Model.Input.InputType;
-import tv.ourglass.alyssa.bourbon_android.Model.Input.TextFocusChangeListener;
 import tv.ourglass.alyssa.bourbon_android.Model.Input.TextValidator;
 import tv.ourglass.alyssa.bourbon_android.Model.OGConstants;
 import tv.ourglass.alyssa.bourbon_android.Model.SharedPrefsManager;
@@ -40,7 +34,7 @@ public class EditAccountFragment extends Fragment {
 
     EditText mLastName;
 
-    EditText mEmail;
+    //EditText mEmail;
 
     Button mSave;
 
@@ -64,8 +58,8 @@ public class EditAccountFragment extends Fragment {
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         toolbar.setTitle(getString(R.string.tb_edit_account));
 
-        mEmail = (EditText) view.findViewById(R.id.email);
-        mEmail.setEnabled(false);
+//        mEmail = (EditText) view.findViewById(R.id.email);
+//        mEmail.setEnabled(false);
 
         mSave = (Button) view.findViewById(R.id.save);
         mFirstName = (EditText) view.findViewById(R.id.firstName);
@@ -176,7 +170,7 @@ public class EditAccountFragment extends Fragment {
                             public void run() {
                                 mFirstName.setText(SharedPrefsManager.getUserFirstName(getActivity()));
                                 mLastName.setText(SharedPrefsManager.getUserLastName(getActivity()));
-                                mEmail.setText(SharedPrefsManager.getUserEmail(getActivity()));
+                                //mEmail.setText(SharedPrefsManager.getUserEmail(getActivity()));
                                 progress.dismiss();
                             }
                         });
@@ -229,7 +223,10 @@ public class EditAccountFragment extends Fragment {
 
         final String firstName = mFirstName.getText().toString();
         final String lastName = mLastName.getText().toString();
-        final String email = SharedPrefsManager.getUserEmail(getActivity());
+        //final String email = SharedPrefsManager.getUserEmail(getActivity());
+
+        // temp until we allow email change, if ever
+        String email = null;
 
         OGCloud.getInstance().changeAccountInfo(getActivity(), firstName, lastName, email,
                 SharedPrefsManager.getUserId(getActivity()),

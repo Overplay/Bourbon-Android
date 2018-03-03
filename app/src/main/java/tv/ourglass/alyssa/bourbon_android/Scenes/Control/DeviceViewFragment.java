@@ -1,36 +1,17 @@
 package tv.ourglass.alyssa.bourbon_android.Scenes.Control;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ListView;
-import android.widget.TextView;
 
-import java.io.IOException;
-
-import okhttp3.Request;
-import okhttp3.Response;
-import tv.ourglass.alyssa.bourbon_android.BourbonApplication;
 import tv.ourglass.alyssa.bourbon_android.Model.OGConstants;
-import tv.ourglass.alyssa.bourbon_android.Model.OGVenue.OGVenue;
-import tv.ourglass.alyssa.bourbon_android.Model.OGVenue.OGVenueListAdapter;
-import tv.ourglass.alyssa.bourbon_android.Model.OGVenue.OGVenueType;
-import tv.ourglass.alyssa.bourbon_android.Model.SharedPrefsManager;
 import tv.ourglass.alyssa.bourbon_android.R;
 import tv.ourglass.alyssa.bourbon_android.Scenes.Tabs.MainTabsActivity;
 
@@ -100,6 +81,7 @@ public class DeviceViewFragment extends WebViewBaseFragment {
             // start timing to detect timeout
             @Override
             public void onPageStarted(final WebView view, String url, Bitmap favicon) {
+                mSpinner.setVisibility(View.VISIBLE);
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -120,6 +102,7 @@ public class DeviceViewFragment extends WebViewBaseFragment {
             @Override
             public void onPageFinished(WebView view, String url) {
                 timeout = false;
+                mSpinner.setVisibility(View.INVISIBLE);
             }
 
         };

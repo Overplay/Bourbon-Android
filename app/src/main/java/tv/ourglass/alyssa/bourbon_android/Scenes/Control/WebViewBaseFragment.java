@@ -2,6 +2,7 @@ package tv.ourglass.alyssa.bourbon_android.Scenes.Control;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -12,21 +13,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
-import android.webkit.WebChromeClient;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.TextView;
+import android.widget.ProgressBar;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import okhttp3.Request;
-import okhttp3.Response;
-import tv.ourglass.alyssa.bourbon_android.BourbonApplication;
 import tv.ourglass.alyssa.bourbon_android.Model.SharedPrefsManager;
 import tv.ourglass.alyssa.bourbon_android.R;
-import tv.ourglass.alyssa.bourbon_android.Scenes.Tabs.MainTabsActivity;
 
 /**
  * Created by atorres on 4/5/17.
@@ -41,25 +37,34 @@ public class WebViewBaseFragment extends Fragment {
     String title;
     WebViewClient webViewClient;
     Boolean timeout;
-    Long webViewTimeout = 15000l;
+    Long webViewTimeout = 30000l;
+
+    ProgressBar mSpinner;
+    WebView webview;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_device_view, container, false);
+        View view = inflater.inflate(R.layout.fragment_device_view2, container, false);
+        mSpinner = (ProgressBar) view.findViewById(R.id.webviewSpinner);
 
         mActivity = getActivity();
 
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         toolbar.setTitle(title);
 
-        WebView webview = (WebView) view.findViewById(R.id.webview);
+        webview = (WebView) view.findViewById(R.id.webview);
         webview.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.OGBackgroundGrey));
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            webview.setWebContentsDebuggingEnabled(true);
+        }
 
         // Configure web view
         webview.getSettings().setJavaScriptEnabled(true);
         webview.getSettings().setBuiltInZoomControls(false);
+        webview.getSettings().setDomStorageEnabled(true);
         timeout = true;
 
         // show alert on error loading page

@@ -26,11 +26,14 @@
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="@dimen/text_input_layout_height"
+            android:background="@drawable/edit_underline">
+
             <tv.ourglass.alyssa.bourbon_android.Views.RegularEditText
                 android:id="@+id/email"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/text_input_file_height"
+                android:background="@android:color/transparent"
                 android:hint="@string/email"
                 android:inputType="textEmailAddress"
                 android:textColor="@color/OGWhite" />
@@ -38,11 +41,15 @@
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="@dimen/text_input_layout_height"
+            android:background="@drawable/edit_underline"
+            android:layout_marginTop="20dp">
+
             <tv.ourglass.alyssa.bourbon_android.Views.RegularEditText
                 android:id="@+id/password"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/text_input_file_height"
+                android:background="@android:color/transparent"
                 android:hint="@string/password"
                 android:inputType="textPassword"
                 android:textColor="@color/OGWhite" />

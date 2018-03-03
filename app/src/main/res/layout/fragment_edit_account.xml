@@ -21,41 +21,50 @@
         android:orientation="vertical"
         android:background="@color/OGBackgroundGrey">
 
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <tv.ourglass.alyssa.bourbon_android.Views.RegularEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/email"
-                android:hint="@string/email"
-                android:inputType="textEmailAddress"
-                android:textColor="@color/OGLightGrey" />
-        </android.support.design.widget.TextInputLayout>
+        <!--<android.support.design.widget.TextInputLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="@dimen/text_input_layout_height"-->
+            <!--android:background="@drawable/edit_underline">-->
+
+            <!--<tv.ourglass.alyssa.bourbon_android.Views.RegularEditText-->
+                <!--android:id="@+id/email"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="@dimen/text_input_file_height"-->
+                <!--android:background="@android:color/transparent"-->
+                <!--android:hint="@string/email"-->
+                <!--android:inputType="textEmailAddress"-->
+                <!--android:textColor="@color/OGLightGrey" />-->
+        <!--</android.support.design.widget.TextInputLayout>-->
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="@dimen/text_input_layout_height"
+            android:background="@drawable/edit_underline">
+
             <tv.ourglass.alyssa.bourbon_android.Views.RegularEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:id="@+id/firstName"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/text_input_file_height"
+                android:background="@android:color/transparent"
                 android:hint="@string/firstName"
                 android:inputType="textPersonName"
-                android:textColor="@color/OGWhite"/>
+                android:textColor="@color/OGWhite" />
         </android.support.design.widget.TextInputLayout>
 
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="@dimen/text_input_layout_height"
+            android:background="@drawable/edit_underline">
+
             <tv.ourglass.alyssa.bourbon_android.Views.RegularEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:id="@+id/lastName"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/text_input_file_height"
+                android:background="@android:color/transparent"
                 android:hint="@string/lastName"
                 android:inputType="textPersonName"
-                android:textColor="@color/OGWhite"/>
+                android:textColor="@color/OGWhite" />
         </android.support.design.widget.TextInputLayout>
 
         <RelativeLayout
