@@ -4,11 +4,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -31,7 +31,6 @@ import tv.ourglass.alyssa.bourbon_android.Model.StateController;
 import tv.ourglass.alyssa.bourbon_android.Networking.OGCloud;
 import tv.ourglass.alyssa.bourbon_android.R;
 import tv.ourglass.alyssa.bourbon_android.Scenes.Control.ChooseDeviceFragment;
-import tv.ourglass.alyssa.bourbon_android.Scenes.Settings.SetupDevice.CreateVenueFragment;
 import tv.ourglass.alyssa.bourbon_android.Scenes.Tabs.MainTabsActivity;
 
 /**
@@ -158,11 +157,24 @@ public class MyVenuesFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_add:
-                ((MainTabsActivity) getActivity()).openNewFragment(new CreateVenueFragment());
+                //((MainTabsActivity) getActivity()).openNewFragment(new CreateVenueFragment());
+                warn();
                 return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+    public void warn() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Contact Us")
+                .setMessage("Contact Ourglass Support to add a new venue.")
+                .setPositiveButton("OK", null)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+
+    }
+
 }
 
