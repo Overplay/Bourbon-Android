@@ -35,7 +35,7 @@
                 android:layout_height="60dip"
                 android:backgroundTint="@android:color/transparent"
                 android:hint="@string/firstNameCaps"
-                android:inputType="textPersonName"
+                android:inputType="textCapSentences"
                 android:paddingTop="@dimen/floating_hint_margin"
                 android:textColor="@color/OGWhite"
                 android:textSize="24dip"
@@ -54,7 +54,7 @@
                 android:layout_height="60dip"
                 android:backgroundTint="@android:color/transparent"
                 android:hint="@string/lastNameCaps"
-                android:inputType="textPersonName"
+                android:inputType="textCapSentences"
                 android:paddingTop="@dimen/floating_hint_margin"
                 android:textColor="@color/OGWhite"
                 android:textSize="24dip" />

@@ -27,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/welcomeTextView"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="30dp"
             android:layout_centerHorizontal="true"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             android:textSize="50sp"
@@ -90,6 +90,18 @@
             android:textAppearance="@style/TextAppearance.AppCompat"
             android:textColor="@color/OGWhite"
             android:textSize="20sp" />
+
+        <tv.ourglass.alyssa.bourbon_android.Views.RegularTextView
+            android:id="@+id/textViewForgot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/signupButton"
+            android:layout_below="@+id/signupButton"
+            android:layout_marginTop="40dp"
+            android:text="@string/forgot"
+            android:textAlignment="viewStart"
+            android:textColor="@color/OGWhite"
+            android:textSize="10sp" />
 
     </RelativeLayout>
 

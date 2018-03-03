@@ -146,13 +146,13 @@ public class ChooseVenueFragment extends Fragment implements GoogleApiClient.Con
 
         getVenues();
 
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                getVenues();
-                mHandler.postDelayed(this, 15000);
-            }
-        }, 15000);
+//        mHandler.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                getVenues();
+//                mHandler.postDelayed(this, 15000);
+//            }
+//        }, 15000);
 
         return rootView;
     }

@@ -91,6 +91,8 @@
 
     <string name="offline">OFFLINE</string>
 
+    <string name="forgot">Reset password</string>
+
     <!-- Common phrases -->
     <string name="uhoh">Uh oh!</string>
     <string name="ok">OK</string>

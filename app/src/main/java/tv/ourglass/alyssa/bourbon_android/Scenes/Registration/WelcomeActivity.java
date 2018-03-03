@@ -1,6 +1,7 @@
 package tv.ourglass.alyssa.bourbon_android.Scenes.Registration;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 
@@ -33,6 +34,13 @@ public class WelcomeActivity extends RegistrationBaseActivity {
                 signup();
             }
         });
+
+        findViewById(R.id.textViewForgot).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                passwordReset();
+            }
+        });
     }
 
     @Override
@@ -50,5 +58,10 @@ public class WelcomeActivity extends RegistrationBaseActivity {
         Intent intent = new Intent(this, EnterNameActivity.class);
         startActivity(intent);
         overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
+    }
+
+    private void passwordReset(){
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://cloud.ourglass.tv/login"));
+        startActivity(browserIntent);
     }
 }
